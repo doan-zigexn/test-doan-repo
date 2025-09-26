@@ -1,7 +1,7 @@
 require_relative '../../config/environment'
 
+line_codes = RStationApi::Railroad.pluck(:code)
 differ_count = 0
-ekitan_station_codes = RStationApi::Station.pluck(:ekitan_station_code).uniq
 
 def stations_equal?(bf_stations, af_stations)
   return false unless bf_stations.size == af_stations.size
@@ -31,18 +31,14 @@ def stations_equal?(bf_stations, af_stations)
   result
 end
 
-ekitan_station_codes.each do |ekitan_station_code|
-  before_stations = StationApi.stations_from_ekitan_codes([ekitan_station_code])
-  after_stations  = RStationApi::Station.stations_from_ekitan_codes([ekitan_station_code])
+line_codes.each do |line_code|
+  before_stations = StationApi.line_stations(line_code: line_code)
+  after_stations = RStationApi::Station.line_stations(line_code: line_code)
 
   unless stations_equal?(before_stations, after_stations)
-    puts "Mismatch output ekitan_station_code: #{ekitan_station_code}"
     differ_count += 1
+    puts "Mismatch output: #{line_code}"
   end
 end
 
-puts "===================SUMMARY==================="
-puts "||                                         ||"
-puts "||  There are #{differ_count} differences  ||"
-puts "||                                         ||"
-puts "============================================="
+puts "There are #{differ_count} differences"
