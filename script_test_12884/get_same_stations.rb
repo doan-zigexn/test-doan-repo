@@ -31,8 +31,8 @@ def lines_equal?(before_lines, after_lines)
 end
 
 RStationApi::Station.pluck(:station_code).uniq.each do |station_code|
-  before_lines = StationApi.lines_by_same_station(station_code)
-  after_lines = RStationApi::Station.lines_by_same_station(station_code)
+  before_lines = StationApi.get_same_stations(station_code)
+  after_lines = RStationApi::Station.get_same_stations(station_code)
 
   unless lines_equal?(before_lines, after_lines)
     puts "Missmatch output, station_code #{station_code}"
